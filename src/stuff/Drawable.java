@@ -1,3 +1,4 @@
+package stuff;
 import java.awt.Graphics;
 
 

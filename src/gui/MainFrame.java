@@ -1,8 +1,10 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -11,9 +13,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
-
-import javax.swing.WindowConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+
+import stuff.Node;
 
 /**
  * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI
@@ -42,6 +45,8 @@ public class MainFrame extends javax.swing.JFrame {
 	private JMenuItem jMenuItemClose;
 	private JMenu jMenuFile;
 
+	private Node rootNode = null;
+
 	/**
 	 * Auto-generated main method to display this JFrame
 	 */
@@ -58,6 +63,10 @@ public class MainFrame extends javax.swing.JFrame {
 	public MainFrame() {
 		super();
 		initGUI();
+	}
+
+	public void setRootNode(Node n) {
+		this.rootNode = n;
 	}
 
 	private void initGUI() {
@@ -78,7 +87,14 @@ public class MainFrame extends javax.swing.JFrame {
 					jScrollPaneDrawingBoard
 							.setMinimumSize(new java.awt.Dimension(200, 200));
 					{
-						jPanel1 = new JPanel();
+						jPanel1 = new JPanel() {
+							@Override
+							public void paint(Graphics g) {
+								super.paint(g);
+								if (rootNode != null)
+									rootNode.draw(g);
+							}
+						};
 						jScrollPaneDrawingBoard.setViewportView(jPanel1);
 						jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 						jPanel1.setPreferredSize(new java.awt.Dimension(800,
