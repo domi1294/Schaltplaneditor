@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
@@ -32,6 +33,7 @@ public class MainFrame extends javax.swing.JFrame {
 	private JMenuBar jMenuBar;
 	private JMenuItem jMenuItemNew;
 	private JMenu jMenuEdit;
+	private JTabbedPane jTabbedPane1;
 	private JPanel jPanel2;
 	private JPanel jPanel1;
 	private JScrollPane jScrollPaneToolbox;
@@ -71,46 +73,49 @@ public class MainFrame extends javax.swing.JFrame {
 
 	private void initGUI() {
 		try {
-			{
-				this.setMinimumSize(new java.awt.Dimension(400, 300));
-			}
 			setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			this.setMinimumSize(new java.awt.Dimension(400, 300));
 			{
-				jSplitPane1 = new JSplitPane();
-				getContentPane().add(jSplitPane1, BorderLayout.CENTER);
+				jTabbedPane1 = new JTabbedPane();
+				getContentPane().add(jTabbedPane1, BorderLayout.CENTER);
+				jTabbedPane1.setTabPlacement(JTabbedPane.BOTTOM);
+				jTabbedPane1.setDoubleBuffered(true);
 				{
-					jScrollPaneDrawingBoard = new JScrollPane();
-					jScrollPaneDrawingBoard.getHorizontalScrollBar()
-							.setVisible(false);
-					jSplitPane1.add(jScrollPaneDrawingBoard, JSplitPane.LEFT);
-					jScrollPaneDrawingBoard
-							.setMinimumSize(new java.awt.Dimension(200, 200));
+					jSplitPane1 = new JSplitPane();
+					jTabbedPane1.addTab("Image", null, jSplitPane1, null);
 					{
-						jPanel1 = new JPanel() {
-							@Override
-							public void paint(Graphics g) {
-								super.paint(g);
-								if (rootNode != null)
-									rootNode.draw(g);
-							}
-						};
-						jScrollPaneDrawingBoard.setViewportView(jPanel1);
-						jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-						jPanel1.setPreferredSize(new java.awt.Dimension(800,
-								600));
+						jScrollPaneDrawingBoard = new JScrollPane();
+						jScrollPaneDrawingBoard.getHorizontalScrollBar()
+						.setVisible(false);
+						jSplitPane1.add(jScrollPaneDrawingBoard, JSplitPane.LEFT);
+						jScrollPaneDrawingBoard
+						.setMinimumSize(new java.awt.Dimension(200, 200));
+						{
+							jPanel1 = new JPanel() {
+								@Override
+								public void paint(Graphics g) {
+									super.paint(g);
+									if (rootNode != null)
+										rootNode.draw(g);
+								}
+							};
+							jScrollPaneDrawingBoard.setViewportView(jPanel1);
+							jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+							jPanel1.setPreferredSize(new java.awt.Dimension(800,
+									600));
+						}
 					}
-				}
-				{
-					jScrollPaneToolbox = new JScrollPane();
-					jSplitPane1.add(jScrollPaneToolbox, JSplitPane.RIGHT);
-					jScrollPaneToolbox.setMinimumSize(new java.awt.Dimension(
-							200, 200));
 					{
-						jPanel2 = new JPanel();
-						jScrollPaneToolbox.setViewportView(jPanel2);
-						jPanel2.setPreferredSize(new java.awt.Dimension(800,
-								600));
+						jScrollPaneToolbox = new JScrollPane();
+						jSplitPane1.add(jScrollPaneToolbox, JSplitPane.RIGHT);
+						jScrollPaneToolbox.setMinimumSize(new java.awt.Dimension(
+								200, 200));
+						{
+							jPanel2 = new JPanel();
+							jScrollPaneToolbox.setViewportView(jPanel2);
+							jPanel2.setPreferredSize(new java.awt.Dimension(800,
+									600));
+						}
 					}
 				}
 			}
