@@ -1,22 +1,52 @@
 package gui;
 
 import java.awt.BorderLayout;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.logging.Logger;
 
+import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
-import stuff.Node;
+import org.apache.batik.dom.GenericDOMImplementation;
+import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.batik.svggen.SVGGraphics2DIOException;
+import org.apache.batik.swing.JSVGCanvas;
+import org.apache.batik.util.XMLResourceDescriptor;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+
+import stuff.Main;
 
 /**
  * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI
@@ -29,11 +59,22 @@ import stuff.Node;
  * ANY CORPORATE OR COMMERCIAL PURPOSE.
  */
 public class MainFrame extends javax.swing.JFrame {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private static final Logger log = Logger.getLogger(MainFrame.class
+			.getName());
+
 	private JMenuBar jMenuBar;
 	private JMenuItem jMenuItemNew;
 	private JMenu jMenuEdit;
+	private JScrollPane jScrollPane1;
+	private JTextArea jTextAreaXMLContent;
+	private JTabbedPane jTabbedPane1;
 	private JPanel jPanel2;
-	private JPanel jPanel1;
 	private JScrollPane jScrollPaneToolbox;
 	private JScrollPane jScrollPaneDrawingBoard;
 	private JSplitPane jSplitPane1;
@@ -44,13 +85,15 @@ public class MainFrame extends javax.swing.JFrame {
 	private JSeparator jSeparator1;
 	private JMenuItem jMenuItemClose;
 	private JMenu jMenuFile;
+	private JSVGCanvas svgCanvas;
 
-	private Node rootNode = null;
+	private JFileChooser fileChooser;
 
 	/**
 	 * Auto-generated main method to display this JFrame
 	 */
 	public static void main(String[] args) {
+		Main.initLogging();
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				MainFrame inst = new MainFrame();
@@ -65,52 +108,76 @@ public class MainFrame extends javax.swing.JFrame {
 		initGUI();
 	}
 
-	public void setRootNode(Node n) {
-		this.rootNode = n;
-	}
-
 	private void initGUI() {
 		try {
-			{
-				this.setMinimumSize(new java.awt.Dimension(400, 300));
-			}
 			setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			this.setMinimumSize(new java.awt.Dimension(400, 300));
 			{
-				jSplitPane1 = new JSplitPane();
-				getContentPane().add(jSplitPane1, BorderLayout.CENTER);
+				jTabbedPane1 = new JTabbedPane();
+				getContentPane().add(jTabbedPane1, BorderLayout.CENTER);
+				jTabbedPane1.setDoubleBuffered(true);
+				jTabbedPane1.setTabPlacement(JTabbedPane.BOTTOM);
+				jTabbedPane1.addChangeListener(new ChangeListener() {
+					public void stateChanged(ChangeEvent evt) {
+						jTabbedPane1StateChanged(evt);
+					}
+				});
 				{
-					jScrollPaneDrawingBoard = new JScrollPane();
-					jScrollPaneDrawingBoard.getHorizontalScrollBar()
-							.setVisible(false);
-					jSplitPane1.add(jScrollPaneDrawingBoard, JSplitPane.LEFT);
-					jScrollPaneDrawingBoard
-							.setMinimumSize(new java.awt.Dimension(200, 200));
+					jSplitPane1 = new JSplitPane();
+					jTabbedPane1.addTab("Image", null, jSplitPane1, null);
 					{
-						jPanel1 = new JPanel() {
-							@Override
-							public void paint(Graphics g) {
-								super.paint(g);
-								if (rootNode != null)
-									rootNode.draw(g);
-							}
-						};
-						jScrollPaneDrawingBoard.setViewportView(jPanel1);
-						jPanel1.setBackground(new java.awt.Color(255, 255, 255));
-						jPanel1.setPreferredSize(new java.awt.Dimension(800,
-								600));
+						jScrollPaneDrawingBoard = new JScrollPane();
+						jScrollPaneDrawingBoard.getHorizontalScrollBar()
+								.setVisible(false);
+						jSplitPane1.add(jScrollPaneDrawingBoard,
+								JSplitPane.LEFT);
+						jScrollPaneDrawingBoard
+								.setMinimumSize(new java.awt.Dimension(200, 200));
+						{
+
+							svgCanvas = new JSVGCanvas();
+							jScrollPaneDrawingBoard.setViewportView(svgCanvas);
+							svgCanvas.setBackground(new java.awt.Color(255,
+									255, 255));
+							svgCanvas.setPreferredSize(new java.awt.Dimension(
+									800, 600));
+						}
+					}
+					{
+						jScrollPaneToolbox = new JScrollPane();
+						jSplitPane1.add(jScrollPaneToolbox, JSplitPane.RIGHT);
+						jScrollPaneToolbox
+								.setMinimumSize(new java.awt.Dimension(200, 200));
+						{
+							jPanel2 = new JPanel();
+							jScrollPaneToolbox.setViewportView(jPanel2);
+							jPanel2.setPreferredSize(new java.awt.Dimension(
+									800, 600));
+						}
 					}
 				}
 				{
-					jScrollPaneToolbox = new JScrollPane();
-					jSplitPane1.add(jScrollPaneToolbox, JSplitPane.RIGHT);
-					jScrollPaneToolbox.setMinimumSize(new java.awt.Dimension(
-							200, 200));
+					jScrollPane1 = new JScrollPane();
+					jTabbedPane1.addTab("XML", null, jScrollPane1, null);
+					jScrollPane1.setDoubleBuffered(true);
+					jScrollPane1.getVerticalScrollBar().addAdjustmentListener(
+							new AdjustmentListener() {
+								public void adjustmentValueChanged(
+										AdjustmentEvent evt) {
+									verticalScrollBarAdjustmentValueChanged(evt);
+								}
+							});
+					jScrollPane1.getHorizontalScrollBar()
+							.addAdjustmentListener(new AdjustmentListener() {
+								public void adjustmentValueChanged(
+										AdjustmentEvent evt) {
+									horizontalScrollBarAdjustmentValueChanged(evt);
+								}
+							});
 					{
-						jPanel2 = new JPanel();
-						jScrollPaneToolbox.setViewportView(jPanel2);
-						jPanel2.setPreferredSize(new java.awt.Dimension(800,
-								600));
+						jTextAreaXMLContent = new JTextArea();
+						jScrollPane1.setViewportView(jTextAreaXMLContent);
+						jTextAreaXMLContent.setDoubleBuffered(true);
 					}
 				}
 			}
@@ -129,6 +196,11 @@ public class MainFrame extends javax.swing.JFrame {
 						jMenuItemNew.setMnemonic(java.awt.event.KeyEvent.VK_N);
 						jMenuItemNew.setAccelerator(KeyStroke
 								.getKeyStroke("ctrl pressed N"));
+						jMenuItemNew.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent evt) {
+								jMenuItemNewActionPerformed(evt);
+							}
+						});
 					}
 					{
 						jMenuItemOpen = new JMenuItem();
@@ -137,6 +209,11 @@ public class MainFrame extends javax.swing.JFrame {
 						jMenuItemOpen.setMnemonic(java.awt.event.KeyEvent.VK_F);
 						jMenuItemOpen.setAccelerator(KeyStroke
 								.getKeyStroke("ctrl pressed O"));
+						jMenuItemOpen.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent evt) {
+								jMenuItemOpenActionPerformed(evt);
+							}
+						});
 					}
 					{
 						jSeparator1 = new JSeparator();
@@ -149,6 +226,11 @@ public class MainFrame extends javax.swing.JFrame {
 						jMenuItemSave.setMnemonic(java.awt.event.KeyEvent.VK_S);
 						jMenuItemSave.setAccelerator(KeyStroke
 								.getKeyStroke("ctrl pressed S"));
+						jMenuItemSave.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent evt) {
+								jMenuItemSaveActionPerformed(evt);
+							}
+						});
 					}
 					{
 						jMenuItemSaveAs = new JMenuItem();
@@ -173,7 +255,7 @@ public class MainFrame extends javax.swing.JFrame {
 								.getKeyStroke("ctrl pressed Q"));
 						jMenuItemClose.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent evt) {
-								System.exit(0);
+								jMenuItemCloseActionPerformed(evt);
 							}
 						});
 					}
@@ -184,12 +266,127 @@ public class MainFrame extends javax.swing.JFrame {
 					jMenuEdit.setText("Bearbeiten");
 				}
 			}
+			fileChooser = new JFileChooser();
+			fileChooser.setDoubleBuffered(true);
 			pack();
 			this.setSize(800, 600);
 		} catch (Exception e) {
 			// add your error handling code here
 			e.printStackTrace();
 		}
+	}
+
+	private void jMenuItemSaveActionPerformed(ActionEvent evt) {
+		log.fine("jMenuItemSave.actionPerformed, event=" + evt);
+		TransformerFactory tFactory = TransformerFactory.newInstance();
+		Transformer transformer;
+		try {
+			transformer = tFactory.newTransformer();
+			DOMSource source = new DOMSource(svgCanvas.getSVGDocument());
+			StreamResult result = new StreamResult(System.out);
+			transformer.transform(source, result);
+		} catch (TransformerException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private void jMenuItemNewActionPerformed(ActionEvent evt) {
+		log.fine("jMenuItemNew.actionPerformed, event=" + evt);
+
+		setXML(loadXMLFromFile(new File("default.svg")));
+	}
+
+	private void jMenuItemOpenActionPerformed(ActionEvent evt) {
+		log.fine("jMenuItemOpen.actionPerformed, event=" + evt);
+		if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+			setXML(loadXMLFromFile(fileChooser.getSelectedFile()));
+	}
+
+	private void jMenuItemCloseActionPerformed(ActionEvent evt) {
+		log.fine("jMenuItemClose.actionPerformed, event=" + evt);
+		System.exit(0);
+	}
+
+	private void horizontalScrollBarAdjustmentValueChanged(AdjustmentEvent evt) {
+		log.fine("jScrollPane1.getHorizontalScrollBar().adjustmentValueChanged, event="
+				+ evt);
+		((JScrollBar) evt.getSource()).getParent().repaint();
+	}
+
+	private void verticalScrollBarAdjustmentValueChanged(AdjustmentEvent evt) {
+		log.fine("jScrollPane1.getVerticalScrollBar().adjustmentValueChanged, event="
+				+ evt);
+		((JScrollBar) evt.getSource()).getParent().repaint();
+	}
+
+	private void jTabbedPane1StateChanged(ChangeEvent evt) {
+		System.out.println("jTabbedPane1.stateChanged, event=" + evt);
+		switch (((JTabbedPane) evt.getSource()).getSelectedIndex()) {
+		case 0:
+			if (jTextAreaXMLContent != null)
+				setXML(getXMLFromString(jTextAreaXMLContent.getText()));
+			break;
+		case 1:
+			jTextAreaXMLContent.setText(getStringFromXML(svgCanvas
+					.getSVGDocument()));
+			break;
+		}
+	}
+
+	public void setXML(Document xml) {
+		svgCanvas.setDocument(xml);
+		jTextAreaXMLContent.setText(getStringFromXML(xml));
+	}
+
+	public Document getXML() {
+		return svgCanvas.getSVGDocument();
+	}
+
+	private String getStringFromXML(Document doc) {
+		try {
+			TransformerFactory tFactory = TransformerFactory.newInstance();
+			Transformer transformer;
+			StringWriter sw = new StringWriter();
+			transformer = tFactory.newTransformer();
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(sw);
+			transformer.transform(source, result);
+			return sw.toString();
+		} catch (TransformerException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public Document getXMLFromString(String xml) {
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory
+					.newInstance();
+			factory.setNamespaceAware(true);
+			DocumentBuilder builder;
+			builder = factory.newDocumentBuilder();
+			return builder.parse(new ByteArrayInputStream(xml.getBytes()));
+		} catch (ParserConfigurationException | SAXException | IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+
+	public Document loadXMLFromFile(File xml) {
+		try {
+			SAXSVGDocumentFactory f = new SAXSVGDocumentFactory(
+					XMLResourceDescriptor.getXMLParserClassName());
+			return f.createDocument(xml.toURI().toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public void saveXMLToFile(Document xml, File file) {
+		throw new UnsupportedOperationException("not yet implemented");
 	}
 
 }

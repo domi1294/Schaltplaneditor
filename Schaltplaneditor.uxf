@@ -4,26 +4,15 @@
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>150</x>
+      <x>380</x>
       <y>390</y>
-      <w>110</w>
+      <w>160</w>
       <h>110</h>
     </coordinates>
-    <panel_attributes>SVGObject
+    <panel_attributes>Node
 --
  
 --</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.custom.Text</type>
-    <coordinates>
-      <x>550</x>
-      <y>390</y>
-      <w>100</w>
-      <h>100</h>
-    </coordinates>
-    <panel_attributes>graphics</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -63,20 +52,6 @@ m2=0..n</panel_attributes>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>380</x>
-      <y>390</y>
-      <w>160</w>
-      <h>110</h>
-    </coordinates>
-    <panel_attributes>Node
---
- 
---</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
       <x>190</x>
       <y>170</y>
       <w>240</w>
@@ -90,6 +65,31 @@ m2=0..n</panel_attributes>
 +add(Graphic)
 +remove(Graphic)
 +getChild(index: int): Graphic</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.Text</type>
+    <coordinates>
+      <x>550</x>
+      <y>390</y>
+      <w>100</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>graphics</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>150</x>
+      <y>390</y>
+      <w>110</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>SVGObject
+--
+ 
+--</panel_attributes>
     <additional_attributes/>
   </element>
 </diagram>
