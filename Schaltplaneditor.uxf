@@ -2,46 +2,10 @@
 <diagram program="umlet" version="12.0">
   <zoom_level>10</zoom_level>
   <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>380</x>
-      <y>390</y>
-      <w>160</w>
-      <h>110</h>
-    </coordinates>
-    <panel_attributes>Node
---
- 
---</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>370</x>
+      <x>630</x>
       <y>280</y>
-      <w>50</w>
-      <h>130</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>30;30;30;110</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>200</x>
-      <y>280</y>
-      <w>50</w>
-      <h>130</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>30;30;30;110</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>400</x>
-      <y>190</y>
       <w>270</w>
       <h>250</h>
     </coordinates>
@@ -52,8 +16,36 @@ m2=0..n</panel_attributes>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>190</x>
-      <y>170</y>
+      <x>380</x>
+      <y>480</y>
+      <w>110</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>SVGObject
+--
+ 
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>610</x>
+      <y>480</y>
+      <w>160</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>Node
+--
+ 
+--</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>420</x>
+      <y>260</y>
       <w>240</w>
       <h>140</h>
     </coordinates>
@@ -68,10 +60,21 @@ m2=0..n</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>600</x>
+      <y>370</y>
+      <w>50</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;30;30;110</additional_attributes>
+  </element>
+  <element>
     <type>com.umlet.element.custom.Text</type>
     <coordinates>
-      <x>550</x>
-      <y>390</y>
+      <x>780</x>
+      <y>480</y>
       <w>100</w>
       <h>100</h>
     </coordinates>
@@ -79,17 +82,14 @@ m2=0..n</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
-    <type>com.umlet.element.Class</type>
+    <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>150</x>
-      <y>390</y>
-      <w>110</w>
-      <h>110</h>
+      <x>430</x>
+      <y>370</y>
+      <w>50</w>
+      <h>130</h>
     </coordinates>
-    <panel_attributes>SVGObject
---
- 
---</panel_attributes>
-    <additional_attributes/>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;30;30;110</additional_attributes>
   </element>
 </diagram>

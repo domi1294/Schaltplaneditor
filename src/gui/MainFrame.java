@@ -36,13 +36,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
-import org.apache.batik.svggen.SVGGraphics2D;
-import org.apache.batik.svggen.SVGGraphics2DIOException;
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.util.XMLResourceDescriptor;
-import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -127,8 +123,6 @@ public class MainFrame extends javax.swing.JFrame {
 					jTabbedPane1.addTab("Image", null, jSplitPane1, null);
 					{
 						jScrollPaneDrawingBoard = new JScrollPane();
-						jScrollPaneDrawingBoard.getHorizontalScrollBar()
-								.setVisible(false);
 						jSplitPane1.add(jScrollPaneDrawingBoard,
 								JSplitPane.LEFT);
 						jScrollPaneDrawingBoard
@@ -178,6 +172,16 @@ public class MainFrame extends javax.swing.JFrame {
 						jTextAreaXMLContent = new JTextArea();
 						jScrollPane1.setViewportView(jTextAreaXMLContent);
 						jTextAreaXMLContent.setDoubleBuffered(true);
+						jScrollPaneToolbox = new JScrollPane();
+						jSplitPane1.add(jScrollPaneToolbox, JSplitPane.RIGHT);
+						jScrollPaneToolbox.setMinimumSize(new java.awt.Dimension(
+								200, 200));
+						{
+							jPanel2 = new JPanel();
+							jScrollPaneToolbox.setViewportView(jPanel2);
+							jPanel2.setPreferredSize(new java.awt.Dimension(800,
+									600));
+						}
 					}
 				}
 			}
