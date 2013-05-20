@@ -5,10 +5,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
+import java.io.StringReader;
 import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
@@ -40,6 +39,10 @@ import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.w3c.dom.Document;
+import org.w3c.dom.bootstrap.DOMImplementationRegistry;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import stuff.Main;
@@ -67,10 +70,11 @@ public class MainFrame extends javax.swing.JFrame {
 	private JMenuBar jMenuBar;
 	private JMenuItem jMenuItemNew;
 	private JMenu jMenuEdit;
+	private JPanel jPanel1;
+	private JTabbedPane jTabbedPane2;
 	private JScrollPane jScrollPane1;
 	private JTextArea jTextAreaXMLContent;
 	private JTabbedPane jTabbedPane1;
-	private JPanel jPanel2;
 	private JScrollPane jScrollPaneToolbox;
 	private JScrollPane jScrollPaneDrawingBoard;
 	private JSplitPane jSplitPane1;
@@ -84,6 +88,9 @@ public class MainFrame extends javax.swing.JFrame {
 	private JSVGCanvas svgCanvas;
 
 	private JFileChooser fileChooser;
+
+	private DOMImplementationRegistry registry;
+	private DOMImplementationLS impl;
 
 	/**
 	 * Auto-generated main method to display this JFrame
@@ -102,6 +109,13 @@ public class MainFrame extends javax.swing.JFrame {
 	public MainFrame() {
 		super();
 		initGUI();
+		try {
+			registry = DOMImplementationRegistry.newInstance();
+			impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
+		} catch (ClassNotFoundException | InstantiationException
+				| IllegalAccessException | ClassCastException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private void initGUI() {
@@ -137,18 +151,6 @@ public class MainFrame extends javax.swing.JFrame {
 									800, 600));
 						}
 					}
-					{
-						jScrollPaneToolbox = new JScrollPane();
-						jSplitPane1.add(jScrollPaneToolbox, JSplitPane.RIGHT);
-						jScrollPaneToolbox
-								.setMinimumSize(new java.awt.Dimension(200, 200));
-						{
-							jPanel2 = new JPanel();
-							jScrollPaneToolbox.setViewportView(jPanel2);
-							jPanel2.setPreferredSize(new java.awt.Dimension(
-									800, 600));
-						}
-					}
 				}
 				{
 					jScrollPane1 = new JScrollPane();
@@ -174,13 +176,17 @@ public class MainFrame extends javax.swing.JFrame {
 						jTextAreaXMLContent.setDoubleBuffered(true);
 						jScrollPaneToolbox = new JScrollPane();
 						jSplitPane1.add(jScrollPaneToolbox, JSplitPane.RIGHT);
-						jScrollPaneToolbox.setMinimumSize(new java.awt.Dimension(
-								200, 200));
+						jScrollPaneToolbox
+								.setMinimumSize(new java.awt.Dimension(200, 200));
 						{
-							jPanel2 = new JPanel();
-							jScrollPaneToolbox.setViewportView(jPanel2);
-							jPanel2.setPreferredSize(new java.awt.Dimension(800,
-									600));
+							jTabbedPane2 = new JTabbedPane();
+							jScrollPaneToolbox.setViewportView(jTabbedPane2);
+							{
+								jPanel1 = new JPanel();
+								jTabbedPane2.addTab("Basic", null, jPanel1, null);
+								jPanel1.setBackground(new java.awt.Color(255,
+										255, 255));
+							}
 						}
 					}
 				}
@@ -270,14 +276,19 @@ public class MainFrame extends javax.swing.JFrame {
 					jMenuEdit.setText("Bearbeiten");
 				}
 			}
-			fileChooser = new JFileChooser();
-			fileChooser.setDoubleBuffered(true);
+			initFileChooser();
 			pack();
 			this.setSize(800, 600);
 		} catch (Exception e) {
 			// add your error handling code here
 			e.printStackTrace();
 		}
+	}
+
+	private void initFileChooser() {
+		fileChooser = new JFileChooser();
+		fileChooser.setDoubleBuffered(true);
+		fileChooser.setCurrentDirectory(new File("D:/Users/Domi/git/Schaltplaneditor"));//TODO Remove/Change this line
 	}
 
 	private void jMenuItemSaveActionPerformed(ActionEvent evt) {
@@ -325,11 +336,12 @@ public class MainFrame extends javax.swing.JFrame {
 	}
 
 	private void jTabbedPane1StateChanged(ChangeEvent evt) {
-		System.out.println("jTabbedPane1.stateChanged, event=" + evt);
+		log.fine("jTabbedPane1.stateChanged, event=" + evt);
 		switch (((JTabbedPane) evt.getSource()).getSelectedIndex()) {
 		case 0:
 			if (jTextAreaXMLContent != null)
-				setXML(getXMLFromString(jTextAreaXMLContent.getText()));
+				svgCanvas.setDocument(getXMLFromString(jTextAreaXMLContent
+						.getText()));
 			break;
 		case 1:
 			jTextAreaXMLContent.setText(getStringFromXML(svgCanvas
@@ -348,19 +360,9 @@ public class MainFrame extends javax.swing.JFrame {
 	}
 
 	private String getStringFromXML(Document doc) {
-		try {
-			TransformerFactory tFactory = TransformerFactory.newInstance();
-			Transformer transformer;
-			StringWriter sw = new StringWriter();
-			transformer = tFactory.newTransformer();
-			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(sw);
-			transformer.transform(source, result);
-			return sw.toString();
-		} catch (TransformerException e) {
-			e.printStackTrace();
-			return null;
-		}
+			LSSerializer writer = impl.createLSSerializer();
+			writer.getDomConfig().setParameter("format-pretty-print", true);
+			return writer.writeToString(doc).trim();
 	}
 
 	public Document getXMLFromString(String xml) {
@@ -370,7 +372,7 @@ public class MainFrame extends javax.swing.JFrame {
 			factory.setNamespaceAware(true);
 			DocumentBuilder builder;
 			builder = factory.newDocumentBuilder();
-			return builder.parse(new ByteArrayInputStream(xml.getBytes()));
+			return builder.parse(new InputSource(new StringReader(xml)));
 		} catch (ParserConfigurationException | SAXException | IOException e) {
 			e.printStackTrace();
 			return null;
