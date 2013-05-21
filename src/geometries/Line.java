@@ -1,8 +1,8 @@
 package geometries;
 
-import java.awt.Graphics;
+import org.w3c.dom.Element;
 
-public class Line extends GraphicalComponent {
+public class Line extends SVGComponent {
 
 	/**
 	 * 
@@ -11,9 +11,9 @@ public class Line extends GraphicalComponent {
 
 	
 	
-	@Override
-	public void draw(Graphics g) {
-		g.drawLine(x, y, x + width, y + width);
+	public Line(Element source) {
+		super(source);
+		// TODO Auto-generated constructor stub
 	}
 
 }

@@ -39,9 +39,11 @@ import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.swing.JSVGCanvas;
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
+import org.w3c.dom.svg.SVGSVGElement;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -92,6 +94,8 @@ public class MainFrame extends javax.swing.JFrame {
 	private DOMImplementationRegistry registry;
 	private DOMImplementationLS impl;
 
+	private Element svgRoot; 
+	
 	/**
 	 * Auto-generated main method to display this JFrame
 	 */
@@ -353,6 +357,8 @@ public class MainFrame extends javax.swing.JFrame {
 	public void setXML(Document xml) {
 		svgCanvas.setDocument(xml);
 		jTextAreaXMLContent.setText(getStringFromXML(xml));
+		SVGSVGElement svgRoot = svgCanvas.getSVGDocument().getRootElement();
+		
 	}
 
 	public Document getXML() {

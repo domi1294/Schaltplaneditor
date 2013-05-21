@@ -1,12 +1,11 @@
 package geometries;
 
-import java.awt.Rectangle;
-import java.util.List;
+import java.awt.Polygon;
 
 public class BorderedBoundingBoxCalculator implements BoundingBoxCalculator {
 
 	@Override
-	public Rectangle calculateBoundingBox(List<GraphicalComponent> children) {
+	public Polygon calculateBoundingBox(SVGComponent source) {
 		// TODO Auto-generated method stub
 		return null;
 	}

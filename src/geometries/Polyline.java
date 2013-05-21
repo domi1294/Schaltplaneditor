@@ -1,30 +1,26 @@
 package geometries;
 
-import java.awt.Graphics;
+import org.w3c.dom.Element;
 
-public class Polyline extends GraphicalComponent {
+public class Polyline extends SVGComponent {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int[] xPoints;
-	private int[] yPoints;
+	private int[] xPoints, yPoints;
 	private int nPoints;
 
 	// default Constructor
-	public Polyline() {
+	public Polyline(Element source) {
+		super(source);
 	}
 	
-	public Polyline(int[] xPoints, int[] yPoints, int nPoints) {
+	public Polyline(Element source, int[] xPoints, int[] yPoints, int nPoints) {
+		super(source);
 		this.xPoints = xPoints;
 		this.yPoints = yPoints;
 		this.nPoints = nPoints;
 	}
 	
-	@Override
-	public void draw(Graphics g) {
-		g.drawPolyline(xPoints, yPoints, nPoints);
-	}
-
 }

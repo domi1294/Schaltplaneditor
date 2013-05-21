@@ -1,12 +1,12 @@
 package geometries;
 
-import java.awt.Rectangle;
-import java.util.List;
+import java.awt.Polygon;
 
+//default behaviour
 public class TightBoundingBoxCalculator implements BoundingBoxCalculator {
 
 	@Override
-	public Rectangle calculateBoundingBox(List<GraphicalComponent> children) {
+	public Polygon calculateBoundingBox(SVGComponent source) {
 		// TODO Auto-generated method stub
 		return null;
 	}

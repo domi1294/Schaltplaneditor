@@ -2,7 +2,7 @@ package geometries;
 
 import java.awt.Graphics;
 
-public class Text extends GraphicalComponent {
+public class Text extends SVGComponent {
 	
 	/**
 	 * 

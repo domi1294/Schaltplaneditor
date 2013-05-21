@@ -1,10 +1,11 @@
 package geometries;
 
-import java.awt.Rectangle;
-import java.util.List;
+import java.awt.Polygon;
+
+import org.w3c.dom.Element;
 
 public interface BoundingBoxCalculator {
 	
-	public Rectangle calculateBoundingBox(List<GraphicalComponent> children);
+	public Polygon calculateBoundingBox(Element source);
 	
 }

@@ -3,33 +3,33 @@ package geometries;
 import java.awt.Graphics;
 import java.util.List;
 
-public class GraphicalNode extends GraphicalComponent {
+public class GraphicalNode extends SVGComponent {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private List<GraphicalComponent> children;
+	private List<SVGComponent> children;
 	
 	@Override
-	public void attachChild(GraphicalComponent child) {
+	public void attachChild(SVGComponent child) {
 		children.add(child);
 	}
 	
 	@Override
-	public void detachChild(GraphicalComponent child) {
+	public void detachChild(SVGComponent child) {
 		children.remove(child);
 	}
 	
 	@Override
-	public GraphicalComponent getChild(int i) {
+	public SVGComponent getChild(int i) {
 		return children.get(i);
 	}
 	
 	@Override
 	public void draw(Graphics g) {
-		for (GraphicalComponent gc : children)
+		for (SVGComponent gc : children)
 			gc.draw(g);
 	}
 
