@@ -364,4 +364,8 @@ public class MainFrame extends javax.swing.JFrame {
 		jTextAreaXMLContent.setText(MyXmlUtilities.getStringFromXML(xml));
 	}
 
+	public Document getXML() {
+		return svgCanvas.getSVGDocument();
+	}
+
 }
