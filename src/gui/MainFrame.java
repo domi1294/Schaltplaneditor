@@ -6,8 +6,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
@@ -26,26 +24,21 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.swing.JSVGCanvas;
-import org.apache.batik.util.XMLResourceDescriptor;
+import org.apache.batik.swing.svg.SVGLoadEventDispatcherAdapter;
+import org.apache.batik.swing.svg.SVGLoadEventDispatcherEvent;
 import org.w3c.dom.Document;
-import org.w3c.dom.bootstrap.DOMImplementationRegistry;
-import org.w3c.dom.ls.DOMImplementationLS;
-import org.w3c.dom.ls.LSSerializer;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import org.w3c.dom.events.EventTarget;
 
 import stuff.Main;
+import stuff.MyEventListener;
+import stuff.MyXmlUtilities;
 
 /**
  * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI
@@ -89,8 +82,7 @@ public class MainFrame extends javax.swing.JFrame {
 
 	private JFileChooser fileChooser;
 
-	private DOMImplementationRegistry registry;
-	private DOMImplementationLS impl;
+	private Document document;
 
 	/**
 	 * Auto-generated main method to display this JFrame
@@ -109,13 +101,6 @@ public class MainFrame extends javax.swing.JFrame {
 	public MainFrame() {
 		super();
 		initGUI();
-		try {
-			registry = DOMImplementationRegistry.newInstance();
-			impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
-		} catch (ClassNotFoundException | InstantiationException
-				| IllegalAccessException | ClassCastException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	private void initGUI() {
@@ -149,6 +134,18 @@ public class MainFrame extends javax.swing.JFrame {
 									255, 255));
 							svgCanvas.setPreferredSize(new java.awt.Dimension(
 									800, 600));
+							svgCanvas
+									.setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);
+							svgCanvas
+									.addSVGLoadEventDispatcherListener(new SVGLoadEventDispatcherAdapter() {
+										public void svgLoadEventDispatchStarted(
+												SVGLoadEventDispatcherEvent e) {
+											document = svgCanvas
+													.getSVGDocument();
+											registerListeners();
+											pack();
+										}
+									});
 						}
 					}
 				}
@@ -183,7 +180,8 @@ public class MainFrame extends javax.swing.JFrame {
 							jScrollPaneToolbox.setViewportView(jTabbedPane2);
 							{
 								jPanel1 = new JPanel();
-								jTabbedPane2.addTab("Basic", null, jPanel1, null);
+								jTabbedPane2.addTab("Basic", null, jPanel1,
+										null);
 								jPanel1.setBackground(new java.awt.Color(255,
 										255, 255));
 							}
@@ -285,10 +283,19 @@ public class MainFrame extends javax.swing.JFrame {
 		}
 	}
 
+	private void registerListeners() {
+		MyEventListener myEventListener = new MyEventListener();
+		EventTarget target = ((EventTarget) document.getDocumentElement());
+		String[] types = { "click", "mousedown", "mouseup", "mouseover", "mousemove", "mouseout" };
+		MyXmlUtilities.registerAllTypes(target, myEventListener, false, types);
+	}
+
 	private void initFileChooser() {
 		fileChooser = new JFileChooser();
 		fileChooser.setDoubleBuffered(true);
-		fileChooser.setCurrentDirectory(new File("D:/Users/Domi/git/Schaltplaneditor"));//TODO Remove/Change this line
+		fileChooser.setCurrentDirectory(new File(
+				"D:/Users/Domi/git/Schaltplaneditor"));// TODO Remove/Change
+														// this line
 	}
 
 	private void jMenuItemSaveActionPerformed(ActionEvent evt) {
@@ -309,13 +316,14 @@ public class MainFrame extends javax.swing.JFrame {
 	private void jMenuItemNewActionPerformed(ActionEvent evt) {
 		log.fine("jMenuItemNew.actionPerformed, event=" + evt);
 
-		setXML(loadXMLFromFile(new File("default.svg")));
+		setXML(MyXmlUtilities.loadXMLFromFile(new File("default.svg")));
 	}
 
 	private void jMenuItemOpenActionPerformed(ActionEvent evt) {
 		log.fine("jMenuItemOpen.actionPerformed, event=" + evt);
 		if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
-			setXML(loadXMLFromFile(fileChooser.getSelectedFile()));
+			setXML(MyXmlUtilities
+					.loadXMLFromFile(fileChooser.getSelectedFile()));
 	}
 
 	private void jMenuItemCloseActionPerformed(ActionEvent evt) {
@@ -340,59 +348,23 @@ public class MainFrame extends javax.swing.JFrame {
 		switch (((JTabbedPane) evt.getSource()).getSelectedIndex()) {
 		case 0:
 			if (jTextAreaXMLContent != null)
-				svgCanvas.setDocument(getXMLFromString(jTextAreaXMLContent
-						.getText()));
+				svgCanvas.setDocument(MyXmlUtilities
+						.getXMLFromString(jTextAreaXMLContent.getText()));
 			break;
 		case 1:
-			jTextAreaXMLContent.setText(getStringFromXML(svgCanvas
-					.getSVGDocument()));
+			jTextAreaXMLContent.setText(MyXmlUtilities
+					.getStringFromXML(svgCanvas.getSVGDocument()));
 			break;
 		}
 	}
 
 	public void setXML(Document xml) {
 		svgCanvas.setDocument(xml);
-		jTextAreaXMLContent.setText(getStringFromXML(xml));
+		jTextAreaXMLContent.setText(MyXmlUtilities.getStringFromXML(xml));
 	}
 
 	public Document getXML() {
 		return svgCanvas.getSVGDocument();
-	}
-
-	private String getStringFromXML(Document doc) {
-			LSSerializer writer = impl.createLSSerializer();
-			writer.getDomConfig().setParameter("format-pretty-print", true);
-			return writer.writeToString(doc).trim();
-	}
-
-	public Document getXMLFromString(String xml) {
-		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory
-					.newInstance();
-			factory.setNamespaceAware(true);
-			DocumentBuilder builder;
-			builder = factory.newDocumentBuilder();
-			return builder.parse(new InputSource(new StringReader(xml)));
-		} catch (ParserConfigurationException | SAXException | IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-
-	}
-
-	public Document loadXMLFromFile(File xml) {
-		try {
-			SAXSVGDocumentFactory f = new SAXSVGDocumentFactory(
-					XMLResourceDescriptor.getXMLParserClassName());
-			return f.createDocument(xml.toURI().toString());
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public void saveXMLToFile(Document xml, File file) {
-		throw new UnsupportedOperationException("not yet implemented");
 	}
 
 }
