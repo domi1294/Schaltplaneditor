@@ -11,11 +11,17 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
+import org.w3c.dom.svg.SVGElement;
+import org.w3c.dom.svg.SVGLocatable;
+import org.w3c.dom.svg.SVGSVGElement;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -73,6 +79,27 @@ public class MyXmlUtilities {
 			EventListener listener, boolean useCapture, String... types) {
 		for (String string : types) {
 			target.addEventListener(string, listener, useCapture);
+		}
+	}
+
+	public static void testInstances(Node n) {
+		System.out.println("----------------------");
+		System.out.println("SVG Instanztest für "+n.getNodeName());
+		System.out.println("Objekt ist Instanz von");
+		if (n instanceof Element)
+			System.out.println("org.w3c.dom.Element");
+		if (n instanceof SVGElement)
+			System.out.println("org.w3c.dom.svg.SVGElement");
+		if (n instanceof SVGSVGElement)
+			System.out.println("org.w3c.dom.svg.SVGSVGElement");
+		if (n instanceof SVGLocatable)
+			System.out.println("org.w3c.dom.svg.SVGLocatable");
+		System.out.println("----------------------");
+	}
+
+	public static void testInstances(NodeList n) {
+		for (int i = 0; i < n.getLength(); i++) {
+			testInstances(n.item(i));
 		}
 	}
 }

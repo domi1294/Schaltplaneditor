@@ -286,7 +286,8 @@ public class MainFrame extends javax.swing.JFrame {
 	private void registerListeners() {
 		MyEventListener myEventListener = new MyEventListener();
 		EventTarget target = ((EventTarget) document.getDocumentElement());
-		String[] types = { "click", "mousedown", "mouseup", "mouseover", "mousemove", "mouseout" };
+		String[] types = { "click", "mousedown", "mouseup", "mouseover",
+				"mousemove", "mouseout" };
 		MyXmlUtilities.registerAllTypes(target, myEventListener, false, types);
 	}
 
@@ -361,10 +362,6 @@ public class MainFrame extends javax.swing.JFrame {
 	public void setXML(Document xml) {
 		svgCanvas.setDocument(xml);
 		jTextAreaXMLContent.setText(MyXmlUtilities.getStringFromXML(xml));
-	}
-
-	public Document getXML() {
-		return svgCanvas.getSVGDocument();
 	}
 
 }
