@@ -1,19 +1,27 @@
-package stuff;
+package gui;
 
-import org.apache.batik.dom.events.DOMMouseEvent;
 import org.apache.batik.dom.svg.SVGOMPoint;
+import org.apache.batik.swing.JSVGCanvas;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.MouseEvent;
 import org.w3c.dom.svg.SVGLocatable;
 import org.w3c.dom.svg.SVGMatrix;
+import org.w3c.dom.svg.SVGPoint;
 
 public class MyEventListener implements EventListener {
 
-	private boolean drag = false;
+	private boolean pressed = false;
 	private Element selectedItem;
-	private SVGOMPoint initialDragPoint;
+	private float deltaX, deltaY;
+
+	private JSVGCanvas svgCanvas;
+	
+	public MyEventListener(JSVGCanvas svgCanvas) {
+		this.svgCanvas = svgCanvas;
+	}
 	
 	@Override
 	public void handleEvent(Event evt) {
@@ -40,18 +48,17 @@ public class MyEventListener implements EventListener {
 	}
 
 	private void handleMouseMove(MouseEvent evt) {
-		if (drag) {
-			DOMMouseEvent temp = (DOMMouseEvent) evt;
-			int newX = temp.getClientX();
-			int newY = temp.getClientY();
+		if (pressed) {
+			int newX = evt.getClientX();
+			int newY = evt.getClientY();
 			
-			SVGOMPoint pt = new SVGOMPoint(newX, newY);
+			SVGPoint pt = new SVGOMPoint(newX, newY);
 			SVGMatrix mat = ((SVGLocatable) evt.getTarget()).getScreenCTM();
 			mat = mat.inverse();
-			SVGOMPoint dragpt = (SVGOMPoint) pt.matrixTransform(mat);
+			SVGPoint dragpt = pt.matrixTransform(mat);
 			
-			selectedItem.setAttribute("x", ""+dragpt.getX());
-			selectedItem.setAttribute("y", ""+dragpt.getY());
+			selectedItem.setAttribute("x", ""+(dragpt.getX()-deltaX));
+			selectedItem.setAttribute("y", ""+(dragpt.getY()-deltaY));
 		}
 	}
 
@@ -61,26 +68,28 @@ public class MyEventListener implements EventListener {
 
 	private void handleMouseDown(MouseEvent evt) {
 		selectedItem = (Element)evt.getTarget();
-		drag = true;
-		DOMMouseEvent temp = (DOMMouseEvent) evt;
-		int newX = temp.getClientX();
-		int newY = temp.getClientY();
+		pressed = true;
+		int newX = evt.getClientX();
+		int newY = evt.getClientY();
 		
 		//convert screen coordinates to document coordinates
-		SVGOMPoint pt = new SVGOMPoint(newX, newY);
+		SVGPoint pt = new SVGOMPoint(newX, newY);
+		Document doc = selectedItem.getOwnerDocument();
+		System.out.println(doc.createElementNS(null, "rect"));
 		SVGMatrix mat = ((SVGLocatable) selectedItem).getScreenCTM(); // elem -> screen
 		mat = mat.inverse(); // screen -> elem
-		initialDragPoint = (SVGOMPoint) pt.matrixTransform(mat);
-		System.out.println("dragging activated");
+		SVGPoint initialDragPoint = pt.matrixTransform(mat);
+		
+		deltaX = initialDragPoint.getX()-Float.parseFloat(selectedItem.getAttribute("x"));
+		deltaY= initialDragPoint.getY()-Float.parseFloat(selectedItem.getAttribute("y"));
 	}
 
 	private void handleMouseUp(MouseEvent evt) {
-		drag = false;
-		System.out.println("dragging deactivated");
+		pressed = false;
 	}
 
 	private void handleMouseOver(MouseEvent evt) {
-		
+
 	}
 
 	private void handleMouseOut(MouseEvent evt) {

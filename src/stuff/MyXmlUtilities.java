@@ -8,8 +8,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.util.XMLResourceDescriptor;
+import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -26,13 +28,15 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class MyXmlUtilities {
-	private static DOMImplementationRegistry registry;
-	private static DOMImplementationLS impl;
-
+	public static final DOMImplementationRegistry REGISTRY;
+	public static final DOMImplementationLS IMPL_LS;
+	public static final DOMImplementation IMPL;
+	
 	static {
 		try {
-			registry = DOMImplementationRegistry.newInstance();
-			impl = (DOMImplementationLS) registry.getDOMImplementation("LS");
+			REGISTRY = DOMImplementationRegistry.newInstance();
+			IMPL_LS = (DOMImplementationLS) REGISTRY.getDOMImplementation("LS");
+			IMPL = GenericDOMImplementation.getDOMImplementation();
 		} catch (ClassNotFoundException | InstantiationException
 				| IllegalAccessException | ClassCastException e) {
 			throw new RuntimeException(e);
@@ -40,7 +44,7 @@ public class MyXmlUtilities {
 	}
 
 	public static String getStringFromXML(Document doc) {
-		LSSerializer writer = impl.createLSSerializer();
+		LSSerializer writer = IMPL_LS.createLSSerializer();
 		writer.getDomConfig().setParameter("format-pretty-print", true);
 		return writer.writeToString(doc).trim();
 	}
@@ -84,7 +88,7 @@ public class MyXmlUtilities {
 
 	public static void testInstances(Node n) {
 		System.out.println("----------------------");
-		System.out.println("SVG Instanztest für "+n.getNodeName());
+		System.out.println("SVG Instanztest für " + n.getNodeName());
 		System.out.println("Objekt ist Instanz von");
 		if (n instanceof Element)
 			System.out.println("org.w3c.dom.Element");
@@ -102,4 +106,17 @@ public class MyXmlUtilities {
 			testInstances(n.item(i));
 		}
 	}
+
+	public static void printChilds(Node n) {
+		printChilds(n, "");
+	}
+	
+	public static void printChilds(Node n, String tabs) {
+		NodeList childs = n.getChildNodes();
+		for (int i = 0; i < childs.getLength(); i++) {
+			System.out.println(tabs + childs.item(i).getNodeName());
+			printChilds(childs.item(i), tabs + "\t");
+		}
+	}
+
 }

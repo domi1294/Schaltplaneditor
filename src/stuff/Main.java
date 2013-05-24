@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.util.XMLResourceDescriptor;
-import org.w3c.dom.NodeList;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGRect;
 import org.w3c.dom.svg.SVGSVGElement;
@@ -31,7 +30,7 @@ public class Main {
 		} catch (IOException ex) {
 		}
 
-		printChilds(doc, 0);
+		MyXmlUtilities.printChilds(doc);
 
 		SVGSVGElement svgRoot = doc.getRootElement();
 		SVGRect rect = svgRoot.createSVGRect();
@@ -50,8 +49,8 @@ public class Main {
 		// }
 
 		// // Get a DOMImplementation.
-		// DOMImplementation domImpl = GenericDOMImplementation
-		// .getDOMImplementation();
+//		 DOMImplementation domImpl = GenericDOMImplementation
+//		 .getDOMImplementation();
 		//
 		// // Create an instance of org.w3c.dom.Document.
 		// String svgNS = "http://www.w3.org/2000/svg";
@@ -80,21 +79,6 @@ public class Main {
 		// frm.setRootNode(rootNode);
 		// frm.setLocationRelativeTo(null);
 		// frm.setVisible(true);
-	}
-
-	public static void printChilds(org.w3c.dom.Node n, int tabs) {
-		NodeList childs = n.getChildNodes();
-		for (int i = 0; i < childs.getLength(); i++) {
-			System.out.println(getTabs(tabs) + childs.item(i).getNodeName());
-			printChilds(childs.item(i), tabs + 1);
-		}
-	}
-
-	public static String getTabs(int n) {
-		String retVal = "";
-		for (int i = 0; i < n; i++)
-			retVal += "\t";
-		return retVal;
 	}
 
 	public static void initLogging() {

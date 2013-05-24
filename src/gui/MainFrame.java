@@ -37,7 +37,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.events.EventTarget;
 
 import stuff.Main;
-import stuff.MyEventListener;
 import stuff.MyXmlUtilities;
 
 /**
@@ -143,7 +142,6 @@ public class MainFrame extends javax.swing.JFrame {
 											document = svgCanvas
 													.getSVGDocument();
 											registerListeners();
-											pack();
 										}
 									});
 						}
@@ -294,12 +292,10 @@ public class MainFrame extends javax.swing.JFrame {
 	private void initFileChooser() {
 		fileChooser = new JFileChooser();
 		fileChooser.setDoubleBuffered(true);
-		fileChooser.setCurrentDirectory(new File(
-				"D:/Users/Domi/git/Schaltplaneditor"));// TODO Remove/Change
-														// this line
 	}
 
 	private void jMenuItemSaveActionPerformed(ActionEvent evt) {
+		//TODO Change this when done
 		log.fine("jMenuItemSave.actionPerformed, event=" + evt);
 		TransformerFactory tFactory = TransformerFactory.newInstance();
 		Transformer transformer;
@@ -321,10 +317,13 @@ public class MainFrame extends javax.swing.JFrame {
 	}
 
 	private void jMenuItemOpenActionPerformed(ActionEvent evt) {
+		//TODO Change this when done
 		log.fine("jMenuItemOpen.actionPerformed, event=" + evt);
-		if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
-			setXML(MyXmlUtilities
-					.loadXMLFromFile(fileChooser.getSelectedFile()));
+//		if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+//			setXML(MyXmlUtilities
+//					.loadXMLFromFile(fileChooser.getSelectedFile()));
+		setXML(MyXmlUtilities.loadXMLFromFile(new File("test.svg")));
+		
 	}
 
 	private void jMenuItemCloseActionPerformed(ActionEvent evt) {
