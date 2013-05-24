@@ -282,7 +282,7 @@ public class MainFrame extends javax.swing.JFrame {
 	}
 
 	private void registerListeners() {
-		MyEventListener myEventListener = new MyEventListener();
+		MyEventListener myEventListener = new MyEventListener(svgCanvas);
 		EventTarget target = ((EventTarget) document.getDocumentElement());
 		String[] types = { "click", "mousedown", "mouseup", "mouseover",
 				"mousemove", "mouseout" };
