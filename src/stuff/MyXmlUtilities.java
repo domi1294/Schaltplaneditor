@@ -14,6 +14,7 @@ import org.apache.batik.util.XMLResourceDescriptor;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
@@ -23,6 +24,8 @@ import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
 import org.w3c.dom.svg.SVGElement;
 import org.w3c.dom.svg.SVGLocatable;
+import org.w3c.dom.svg.SVGRect;
+import org.w3c.dom.svg.SVGRectElement;
 import org.w3c.dom.svg.SVGSVGElement;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -31,7 +34,7 @@ public class MyXmlUtilities {
 	public static final DOMImplementationRegistry REGISTRY;
 	public static final DOMImplementationLS IMPL_LS;
 	public static final DOMImplementation IMPL;
-	
+
 	static {
 		try {
 			REGISTRY = DOMImplementationRegistry.newInstance();
@@ -47,6 +50,26 @@ public class MyXmlUtilities {
 		LSSerializer writer = IMPL_LS.createLSSerializer();
 		writer.getDomConfig().setParameter("format-pretty-print", true);
 		return writer.writeToString(doc).trim();
+	}
+
+	public static void drawBoundingBox(SVGElement element) {
+		element.getOwnerDocument().insertBefore(getBBoxAsRectElement(element),
+				element);
+	}
+
+	public static SVGElement getBBoxAsRectElement(SVGElement element) {
+		SVGRect bBox = ((SVGLocatable) element).getBBox();
+		SVGRectElement bbElement = (SVGRectElement) element.getOwnerDocument()
+				.createElementNS(element.getNamespaceURI(), "rect");
+		System.out.println(bbElement);
+		// set boundingbox values to new rect-element
+		bbElement.setAttribute("x", "" + bBox.getX());
+		bbElement.setAttribute("y", "" + bBox.getY());
+		bbElement.setAttribute("height", "" + bBox.getHeight());
+		bbElement.setAttribute("width", "" + bBox.getWidth());
+		NamedNodeMap nnm = bbElement.getAttributes();
+		System.out.println(nnm.getNamedItem("x").getNodeValue());
+		return bbElement;
 	}
 
 	public static Document getXMLFromString(String xml) {
@@ -110,7 +133,7 @@ public class MyXmlUtilities {
 	public static void printChilds(Node n) {
 		printChilds(n, "");
 	}
-	
+
 	public static void printChilds(Node n, String tabs) {
 		NodeList childs = n.getChildNodes();
 		for (int i = 0; i < childs.getLength(); i++) {

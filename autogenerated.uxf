@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="12.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>830</x>
+      <y>10</y>
+      <w>360</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>stuff::Main
+--
+-log = Logger.getLogger(Main.class.getName()): Logger
+--
++main(String[] args): void
++initLogging(): void
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>10</x>
+      <y>10</y>
+      <w>470</w>
+      <h>690</h>
+    </coordinates>
+    <panel_attributes>gui::MainFrame
+--
+-serialVersionUID = 1L: long
+-log = Logger.getLogger(MainFrame.class.getName()): Logger
+-jMenuBar: JMenuBar
+-jMenuItemNew: JMenuItem
+-jMenuEdit: JMenu
+-jPanel1: JPanel
+-jTabbedPane2: JTabbedPane
+-jScrollPane1: JScrollPane
+-jTextAreaXMLContent: JTextArea
+-jTabbedPane1: JTabbedPane
+-jScrollPaneToolbox: JScrollPane
+-jScrollPaneDrawingBoard: JScrollPane
+-jSplitPane1: JSplitPane
+-jMenuItemSaveAs: JMenuItem
+-jSeparator2: JSeparator
+-jMenuItemSave: JMenuItem
+-jMenuItemOpen: JMenuItem
+-jSeparator1: JSeparator
+-jMenuItemClose: JMenuItem
+-jMenuFile: JMenu
+-svgCanvas: JSVGCanvas
+-fileChooser: JFileChooser
+-document: Document
+--
++MainFrame(): ctor
++main(String[] args): void
+-initGUI(): void
+-registerListeners(): void
+-initFileChooser(): void
+-jMenuItemSaveActionPerformed(ActionEvent evt): void
+-jMenuItemNewActionPerformed(ActionEvent evt): void
+-jMenuItemOpenActionPerformed(ActionEvent evt): void
+-jMenuItemCloseActionPerformed(ActionEvent evt): void
+-horizontalScrollBarAdjustmentValueChanged(AdjustmentEvent evt): void
+-verticalScrollBarAdjustmentValueChanged(AdjustmentEvent evt): void
+-jTabbedPane1StateChanged(ChangeEvent evt): void
++setXML(Document xml): void
++getXML(): Document
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>490</x>
+      <y>10</y>
+      <w>330</w>
+      <h>260</h>
+    </coordinates>
+    <panel_attributes>gui::MyEventListener
+--
+-pressed = false: boolean
+-selectedItem: Element
+-deltaX, deltaY: float
+-svgCanvas: JSVGCanvas
+--
++MyEventListener(JSVGCanvas svgCanvas): ctor
++handleEvent(Event evt): void
+-handleMouseMove(MouseEvent evt): void
+-handleClick(MouseEvent evt): void
+-handleMouseDown(MouseEvent evt): void
+-handleMouseUp(MouseEvent evt): void
+-handleMouseOver(MouseEvent evt): void
+-handleMouseOut(MouseEvent evt): void
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

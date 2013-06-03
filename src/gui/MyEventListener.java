@@ -1,15 +1,20 @@
 package gui;
 
 import org.apache.batik.dom.svg.SVGOMPoint;
+import org.apache.batik.dom.svg.SVGOMRectElement;
 import org.apache.batik.swing.JSVGCanvas;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.events.Event;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.MouseEvent;
+import org.w3c.dom.svg.SVGElement;
 import org.w3c.dom.svg.SVGLocatable;
 import org.w3c.dom.svg.SVGMatrix;
 import org.w3c.dom.svg.SVGPoint;
+import org.w3c.dom.svg.SVGSVGElement;
+
+import stuff.MyXmlUtilities;
 
 public class MyEventListener implements EventListener {
 
@@ -63,7 +68,9 @@ public class MyEventListener implements EventListener {
 	}
 
 	private void handleClick(MouseEvent evt) {
-		System.out.println(evt.getTarget());
+//		System.out.println(evt.getTarget());
+		SVGOMRectElement e;
+		MyXmlUtilities.drawBoundingBox((SVGElement) evt.getTarget());
 	}
 
 	private void handleMouseDown(MouseEvent evt) {
@@ -75,7 +82,7 @@ public class MyEventListener implements EventListener {
 		//convert screen coordinates to document coordinates
 		SVGPoint pt = new SVGOMPoint(newX, newY);
 		Document doc = selectedItem.getOwnerDocument();
-		System.out.println(doc.createElementNS(null, "rect"));
+//		System.out.println(doc.createElementNS(null, "rect"));
 		SVGMatrix mat = ((SVGLocatable) selectedItem).getScreenCTM(); // elem -> screen
 		mat = mat.inverse(); // screen -> elem
 		SVGPoint initialDragPoint = pt.matrixTransform(mat);
