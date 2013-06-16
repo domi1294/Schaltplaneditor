@@ -12,7 +12,6 @@ import org.w3c.dom.svg.SVGElement;
 import org.w3c.dom.svg.SVGLocatable;
 import org.w3c.dom.svg.SVGMatrix;
 import org.w3c.dom.svg.SVGPoint;
-import org.w3c.dom.svg.SVGSVGElement;
 
 import stuff.MyXmlUtilities;
 
@@ -53,6 +52,7 @@ public class MyEventListener implements EventListener {
 	}
 
 	private void handleMouseMove(MouseEvent evt) {
+		System.out.println("mouse moved");
 		if (pressed) {
 			int newX = evt.getClientX();
 			int newY = evt.getClientY();

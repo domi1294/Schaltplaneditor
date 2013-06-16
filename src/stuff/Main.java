@@ -25,8 +25,9 @@ public class Main {
 		try {
 			SAXSVGDocumentFactory docFactory = new SAXSVGDocumentFactory(
 					XMLResourceDescriptor.getXMLParserClassName());
-			File file = new File("test.svg");
+			File file = new File("test2.svg");
 			doc = docFactory.createSVGDocument(file.toURI().toString());
+			MyXmlUtilities.saveXMLToFile(doc, file);
 		} catch (IOException ex) {
 		}
 

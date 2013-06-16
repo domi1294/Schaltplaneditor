@@ -7,6 +7,12 @@ import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
@@ -98,8 +104,12 @@ public class MyXmlUtilities {
 		}
 	}
 
-	public static void saveXMLToFile(Document xml, File file) {
-		throw new UnsupportedOperationException("not yet implemented");
+	public static void saveXMLToFile(Document xml, File file) throws TransformerException {
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		DOMSource source = new DOMSource(xml);
+		StreamResult result = new StreamResult(file);
+		transformer.transform(source, result);
 	}
 
 	public static void registerAllTypes(EventTarget target,

@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.logging.Logger;
 
@@ -12,7 +14,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -62,14 +63,20 @@ public class MainFrame extends javax.swing.JFrame {
 	private JMenuBar jMenuBar;
 	private JMenuItem jMenuItemNew;
 	private JMenu jMenuEdit;
-	private JPanel jPanel1;
-	private JTabbedPane jTabbedPane2;
-	private JScrollPane jScrollPane1;
+	private JSVGCanvas svgCanvasStromlaufplanBasics;
+	private JTabbedPane jTabbedPaneStromlaufplanToolbox;
+	private JSVGCanvas svgCanvasStromlaufplan;
+	private JScrollPane jScrollPaneStromlaufplanToolbox;
+	private JScrollPane jScrollPaneStromlaufplan;
+	private JSplitPane jSplitPaneStromlaufplan;
+	private JSVGCanvas svgCanvasWirkschaltplanBasics;
+	private JTabbedPane jTabbedPaneWirkschaltplanToolbox;
+	private JScrollPane jScrollPaneXml;
 	private JTextArea jTextAreaXMLContent;
-	private JTabbedPane jTabbedPane1;
-	private JScrollPane jScrollPaneToolbox;
-	private JScrollPane jScrollPaneDrawingBoard;
-	private JSplitPane jSplitPane1;
+	private JTabbedPane jTabbedPaneMain;
+	private JScrollPane jScrollPaneWirkschaltplanToolbox;
+	private JScrollPane jScrollPaneWirkschaltplan;
+	private JSplitPane jSplitPaneWirkschaltplan;
 	private JMenuItem jMenuItemSaveAs;
 	private JSeparator jSeparator2;
 	private JMenuItem jMenuItemSave;
@@ -77,11 +84,12 @@ public class MainFrame extends javax.swing.JFrame {
 	private JSeparator jSeparator1;
 	private JMenuItem jMenuItemClose;
 	private JMenu jMenuFile;
-	private JSVGCanvas svgCanvas;
+	private JSVGCanvas svgCanvasWirkschaltplan;
 
 	private JFileChooser fileChooser;
 
 	private Document document;
+	private int selectedIndex = 0;
 
 	/**
 	 * Auto-generated main method to display this JFrame
@@ -107,40 +115,42 @@ public class MainFrame extends javax.swing.JFrame {
 			setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			this.setMinimumSize(new java.awt.Dimension(400, 300));
 			{
-				jTabbedPane1 = new JTabbedPane();
-				getContentPane().add(jTabbedPane1, BorderLayout.CENTER);
-				jTabbedPane1.setDoubleBuffered(true);
-				jTabbedPane1.setTabPlacement(JTabbedPane.BOTTOM);
-				jTabbedPane1.addChangeListener(new ChangeListener() {
-					public void stateChanged(ChangeEvent evt) {
-						jTabbedPane1StateChanged(evt);
-					}
-				});
+				jTabbedPaneMain = new JTabbedPane();
+				getContentPane().add(jTabbedPaneMain, BorderLayout.CENTER);
+				jTabbedPaneMain.setDoubleBuffered(true);
+				jTabbedPaneMain.setTabPlacement(JTabbedPane.BOTTOM);
 				{
-					jSplitPane1 = new JSplitPane();
-					jTabbedPane1.addTab("Image", null, jSplitPane1, null);
+					jSplitPaneWirkschaltplan = new JSplitPane();
+					jTabbedPaneMain.addTab("Wirkschaltplan", null,
+							jSplitPaneWirkschaltplan, null);
+					jSplitPaneWirkschaltplan.addPropertyChangeListener(
+							JSplitPane.DIVIDER_LOCATION_PROPERTY,
+							new PropertyChangeListener() {
+								public void propertyChange(
+										PropertyChangeEvent evt) {
+									jSplitPaneWirkschaltplanPropertyChange(evt);
+								}
+							});
 					{
-						jScrollPaneDrawingBoard = new JScrollPane();
-						jSplitPane1.add(jScrollPaneDrawingBoard,
+						jScrollPaneWirkschaltplan = new JScrollPane();
+						jSplitPaneWirkschaltplan.add(jScrollPaneWirkschaltplan,
 								JSplitPane.LEFT);
-						jScrollPaneDrawingBoard
+						jScrollPaneWirkschaltplan
 								.setMinimumSize(new java.awt.Dimension(200, 200));
 						{
 
-							svgCanvas = new JSVGCanvas();
-							jScrollPaneDrawingBoard.setViewportView(svgCanvas);
-							svgCanvas.setBackground(new java.awt.Color(255,
-									255, 255));
-							svgCanvas.setPreferredSize(new java.awt.Dimension(
-									800, 600));
-							svgCanvas
+							svgCanvasWirkschaltplan = new JSVGCanvas();
+							jScrollPaneWirkschaltplan
+									.setViewportView(svgCanvasWirkschaltplan);
+							svgCanvasWirkschaltplan
+									.setPreferredSize(new java.awt.Dimension(
+											800, 600));
+							svgCanvasWirkschaltplan
 									.setDocumentState(JSVGCanvas.ALWAYS_DYNAMIC);
-							svgCanvas
+							svgCanvasWirkschaltplan
 									.addSVGLoadEventDispatcherListener(new SVGLoadEventDispatcherAdapter() {
 										public void svgLoadEventDispatchStarted(
 												SVGLoadEventDispatcherEvent e) {
-											document = svgCanvas
-													.getSVGDocument();
 											registerListeners();
 										}
 									});
@@ -148,17 +158,74 @@ public class MainFrame extends javax.swing.JFrame {
 					}
 				}
 				{
-					jScrollPane1 = new JScrollPane();
-					jTabbedPane1.addTab("XML", null, jScrollPane1, null);
-					jScrollPane1.setDoubleBuffered(true);
-					jScrollPane1.getVerticalScrollBar().addAdjustmentListener(
-							new AdjustmentListener() {
+					jSplitPaneStromlaufplan = new JSplitPane();
+					jTabbedPaneMain.addTab("Stromlaufplan", null,
+							jSplitPaneStromlaufplan, null);
+					jSplitPaneStromlaufplan.addPropertyChangeListener(
+							JSplitPane.DIVIDER_LOCATION_PROPERTY,
+							new PropertyChangeListener() {
+								public void propertyChange(
+										PropertyChangeEvent evt) {
+									jSplitPaneStromlaufplanPropertyChange(evt);
+								}
+							});
+					{
+						jScrollPaneStromlaufplan = new JScrollPane();
+						jSplitPaneStromlaufplan.add(jScrollPaneStromlaufplan,
+								JSplitPane.LEFT);
+						jScrollPaneStromlaufplan
+								.setMinimumSize(new java.awt.Dimension(200, 200));
+						{
+							svgCanvasStromlaufplan = new JSVGCanvas();
+							jScrollPaneStromlaufplan
+									.setViewportView(svgCanvasStromlaufplan);
+							svgCanvasStromlaufplan.setSize(800, 600);
+							svgCanvasStromlaufplan
+									.setPreferredSize(new java.awt.Dimension(
+											800, 600));
+						}
+					}
+					{
+						jScrollPaneStromlaufplanToolbox = new JScrollPane();
+						jSplitPaneStromlaufplan.add(
+								jScrollPaneStromlaufplanToolbox,
+								JSplitPane.RIGHT);
+						{
+							jTabbedPaneStromlaufplanToolbox = new JTabbedPane();
+							jScrollPaneStromlaufplanToolbox
+									.setViewportView(jTabbedPaneStromlaufplanToolbox);
+							jTabbedPaneStromlaufplanToolbox
+									.addChangeListener(new ChangeListener() {
+										public void stateChanged(ChangeEvent evt) {
+											jTabbedPaneStromlaufplanToolboxStateChanged(evt);
+										}
+									});
+							{
+								svgCanvasStromlaufplanBasics = new JSVGCanvas();
+								jTabbedPaneStromlaufplanToolbox.addTab("Basic",
+										null, svgCanvasStromlaufplanBasics,
+										null);
+							}
+						}
+					}
+				}
+				jTabbedPaneMain.addChangeListener(new ChangeListener() {
+					public void stateChanged(ChangeEvent evt) {
+						jTabbedPaneMainStateChanged(evt);
+					}
+				});
+				{
+					jScrollPaneXml = new JScrollPane();
+					jTabbedPaneMain.addTab("XML", null, jScrollPaneXml, null);
+					jScrollPaneXml.setDoubleBuffered(true);
+					jScrollPaneXml.getVerticalScrollBar()
+							.addAdjustmentListener(new AdjustmentListener() {
 								public void adjustmentValueChanged(
 										AdjustmentEvent evt) {
 									verticalScrollBarAdjustmentValueChanged(evt);
 								}
 							});
-					jScrollPane1.getHorizontalScrollBar()
+					jScrollPaneXml.getHorizontalScrollBar()
 							.addAdjustmentListener(new AdjustmentListener() {
 								public void adjustmentValueChanged(
 										AdjustmentEvent evt) {
@@ -167,21 +234,32 @@ public class MainFrame extends javax.swing.JFrame {
 							});
 					{
 						jTextAreaXMLContent = new JTextArea();
-						jScrollPane1.setViewportView(jTextAreaXMLContent);
+						jScrollPaneXml.setViewportView(jTextAreaXMLContent);
 						jTextAreaXMLContent.setDoubleBuffered(true);
-						jScrollPaneToolbox = new JScrollPane();
-						jSplitPane1.add(jScrollPaneToolbox, JSplitPane.RIGHT);
-						jScrollPaneToolbox
+						jScrollPaneWirkschaltplanToolbox = new JScrollPane();
+						jSplitPaneWirkschaltplan.add(
+								jScrollPaneWirkschaltplanToolbox,
+								JSplitPane.RIGHT);
+						jScrollPaneWirkschaltplanToolbox
 								.setMinimumSize(new java.awt.Dimension(200, 200));
 						{
-							jTabbedPane2 = new JTabbedPane();
-							jScrollPaneToolbox.setViewportView(jTabbedPane2);
+							jTabbedPaneWirkschaltplanToolbox = new JTabbedPane();
+							jScrollPaneWirkschaltplanToolbox
+									.setViewportView(jTabbedPaneWirkschaltplanToolbox);
+							jTabbedPaneWirkschaltplanToolbox
+									.addChangeListener(new ChangeListener() {
+										public void stateChanged(ChangeEvent evt) {
+											jTabbedPaneWirkschaltplanToolboxStateChanged(evt);
+										}
+									});
 							{
-								jPanel1 = new JPanel();
-								jTabbedPane2.addTab("Basic", null, jPanel1,
-										null);
-								jPanel1.setBackground(new java.awt.Color(255,
-										255, 255));
+								svgCanvasWirkschaltplanBasics = new JSVGCanvas();
+								jTabbedPaneWirkschaltplanToolbox.addTab(
+										"Basic", null,
+										svgCanvasWirkschaltplanBasics, null);
+								svgCanvasWirkschaltplanBasics
+										.setBackground(new java.awt.Color(255,
+												255, 255));
 							}
 						}
 					}
@@ -282,7 +360,8 @@ public class MainFrame extends javax.swing.JFrame {
 	}
 
 	private void registerListeners() {
-		MyEventListener myEventListener = new MyEventListener(svgCanvas);
+		MyEventListener myEventListener = new MyEventListener(
+				svgCanvasWirkschaltplan);
 		EventTarget target = ((EventTarget) document.getDocumentElement());
 		String[] types = { "click", "mousedown", "mouseup", "mouseover",
 				"mousemove", "mouseout" };
@@ -295,13 +374,14 @@ public class MainFrame extends javax.swing.JFrame {
 	}
 
 	private void jMenuItemSaveActionPerformed(ActionEvent evt) {
-		//TODO Change this when done
+		// TODO Change this when done
 		log.fine("jMenuItemSave.actionPerformed, event=" + evt);
 		TransformerFactory tFactory = TransformerFactory.newInstance();
 		Transformer transformer;
 		try {
 			transformer = tFactory.newTransformer();
-			DOMSource source = new DOMSource(svgCanvas.getSVGDocument());
+			DOMSource source = new DOMSource(
+					svgCanvasWirkschaltplan.getSVGDocument());
 			StreamResult result = new StreamResult(System.out);
 			transformer.transform(source, result);
 		} catch (TransformerException e) {
@@ -317,13 +397,13 @@ public class MainFrame extends javax.swing.JFrame {
 	}
 
 	private void jMenuItemOpenActionPerformed(ActionEvent evt) {
-		//TODO Change this when done
+		// TODO Change this when done
 		log.fine("jMenuItemOpen.actionPerformed, event=" + evt);
-//		if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
-//			setXML(MyXmlUtilities
-//					.loadXMLFromFile(fileChooser.getSelectedFile()));
+		// if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+		// setXML(MyXmlUtilities
+		// .loadXMLFromFile(fileChooser.getSelectedFile()));
 		setXML(MyXmlUtilities.loadXMLFromFile(new File("test.svg")));
-		
+
 	}
 
 	private void jMenuItemCloseActionPerformed(ActionEvent evt) {
@@ -332,39 +412,77 @@ public class MainFrame extends javax.swing.JFrame {
 	}
 
 	private void horizontalScrollBarAdjustmentValueChanged(AdjustmentEvent evt) {
-		log.fine("jScrollPane1.getHorizontalScrollBar().adjustmentValueChanged, event="
+		log.fine("jScrollPaneXml.getHorizontalScrollBar().adjustmentValueChanged, event="
 				+ evt);
 		((JScrollBar) evt.getSource()).getParent().repaint();
 	}
 
 	private void verticalScrollBarAdjustmentValueChanged(AdjustmentEvent evt) {
-		log.fine("jScrollPane1.getVerticalScrollBar().adjustmentValueChanged, event="
+		log.fine("jScrollPaneXml.getVerticalScrollBar().adjustmentValueChanged, event="
 				+ evt);
 		((JScrollBar) evt.getSource()).getParent().repaint();
 	}
 
-	private void jTabbedPane1StateChanged(ChangeEvent evt) {
-		log.fine("jTabbedPane1.stateChanged, event=" + evt);
-		switch (((JTabbedPane) evt.getSource()).getSelectedIndex()) {
+	private void jTabbedPaneMainStateChanged(ChangeEvent evt) {
+		switch (jTabbedPaneMain.getSelectedIndex()) {
 		case 0:
-			if (jTextAreaXMLContent != null)
-				svgCanvas.setDocument(MyXmlUtilities
-						.getXMLFromString(jTextAreaXMLContent.getText()));
-			break;
 		case 1:
+			if (selectedIndex == 2 && jTextAreaXMLContent != null) {
+				document = MyXmlUtilities.getXMLFromString(jTextAreaXMLContent
+						.getText());
+				svgCanvasWirkschaltplan.setDocument(document);
+				svgCanvasStromlaufplan.setDocument(document);
+			}
+			selectedIndex = jTabbedPaneMain.getSelectedIndex();
+			break;
+		case 2:
 			jTextAreaXMLContent.setText(MyXmlUtilities
-					.getStringFromXML(svgCanvas.getSVGDocument()));
+					.getStringFromXML(document));
+			selectedIndex = jTabbedPaneMain.getSelectedIndex();
 			break;
 		}
 	}
 
 	public void setXML(Document xml) {
-		svgCanvas.setDocument(xml);
+		document = xml;
+		svgCanvasWirkschaltplan.setDocument(xml);
+		svgCanvasStromlaufplan.setDocument(xml);
 		jTextAreaXMLContent.setText(MyXmlUtilities.getStringFromXML(xml));
 	}
 
 	public Document getXML() {
-		return svgCanvas.getSVGDocument();
+		return document;
+	}
+
+	// synchronize JSplitPanes
+	private void jSplitPaneWirkschaltplanPropertyChange(PropertyChangeEvent evt) {
+		jSplitPaneStromlaufplan.setDividerLocation((int) evt.getNewValue());
+	}
+
+	// synchronize JSplitPanes
+	private void jSplitPaneStromlaufplanPropertyChange(PropertyChangeEvent evt) {
+		jSplitPaneWirkschaltplan.setDividerLocation((int) evt.getNewValue());
+	}
+
+	// synchronize JTabbedPanes in Toolbox
+	private void jTabbedPaneWirkschaltplanToolboxStateChanged(ChangeEvent evt) {
+		System.out
+				.println("jTabbedPaneWirkschaltplanToolbox.stateChanged, event="
+						+ evt);
+		jTabbedPaneStromlaufplanToolbox
+				.setSelectedIndex(jTabbedPaneWirkschaltplanToolbox
+						.getSelectedIndex());
+	}
+
+	// synchronize JTabbedPanes in Toolbox
+	private void jTabbedPaneStromlaufplanToolboxStateChanged(ChangeEvent evt) {
+		System.out
+				.println("jTabbedPaneStromlaufplanToolbox.stateChanged, event="
+						+ evt);
+		if (jTabbedPaneWirkschaltplanToolbox != null)
+			jTabbedPaneWirkschaltplanToolbox
+					.setSelectedIndex(jTabbedPaneStromlaufplanToolbox
+							.getSelectedIndex());
 	}
 
 }
