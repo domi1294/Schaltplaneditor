@@ -1,2 +1,2 @@
-Schaltplaneditor
-================
+Schaltplaneditor (UNFINISHED)
+=============================
